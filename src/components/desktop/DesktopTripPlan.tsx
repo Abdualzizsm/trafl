@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { parseTripPlan } from '@/utils/tripPlanParser';
+import { TripPlanResponse } from '@/services/gemini';
 import { LocationCard } from '../shared/LocationCard';
 import { CostBreakdown } from '../shared/CostBreakdown';
 import { WeatherWidget } from '../shared/WeatherWidget';
 import { DayTimeline } from '../shared/DayTimeline';
 
 interface DesktopTripPlanProps {
-  plan: string;
+  plan: TripPlanResponse;
 }
 
 export const DesktopTripPlan = ({ plan }: DesktopTripPlanProps) => {

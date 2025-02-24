@@ -151,6 +151,7 @@ function DesktopHome() {
             </motion.div>
           </div>
         </div>
+    </div>
 
       {/* Features */}
       <div className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">

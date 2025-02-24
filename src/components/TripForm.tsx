@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TRIP_TYPES } from '@/config/constants';
-import { generateTripPlan } from '@/services/gemini';
+import { generateTripPlan, TripPlanResponse } from '@/services/gemini';
 import TripPlanDisplay from './TripPlanDisplay';
 
 export const TripForm = () => {
@@ -14,7 +14,7 @@ export const TripForm = () => {
     endDate: '',
     tripType: ''
   });
-  const [tripPlan, setTripPlan] = useState<string | null>(null);
+  const [tripPlan, setTripPlan] = useState<TripPlanResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

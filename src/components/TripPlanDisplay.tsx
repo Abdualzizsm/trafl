@@ -6,8 +6,10 @@ import dynamic from 'next/dynamic';
 const MobileTripPlan = dynamic(() => import('./mobile/MobileTripPlan'));
 const DesktopTripPlan = dynamic(() => import('./desktop/DesktopTripPlan'));
 
+import { TripPlanResponse } from '@/services/gemini';
+
 interface TripPlanProps {
-  plan: string;
+  plan: TripPlanResponse;
 }
 
 export const TripPlanDisplay = ({ plan }: TripPlanProps) => {

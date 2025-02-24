@@ -24,11 +24,13 @@ export default function SwipeableCard({
 }: SwipeableCardProps) {
   const controls = useAnimation();
   const [isDragging, setIsDragging] = useState(false);
+  const [dragX, setDragX] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const bind = useGesture({
     onDrag: ({ movement: [x], direction: [xDir], down }) => {
       setIsDragging(down);
+      setDragX(x);
       controls.start({
         x: down ? x : 0,
         rotate: down ? x * 0.03 : 0,
@@ -48,7 +50,7 @@ export default function SwipeableCard({
       className="relative w-full max-w-sm mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden"
       animate={controls}
       whileTap={{ scale: 0.95 }}
-      {...bind()}
+      {...(bind() as any)} // Type assertion for gesture binding
       style={{ touchAction: 'none' }}
     >
       <div className="relative h-64">
@@ -94,7 +96,7 @@ export default function SwipeableCard({
         >
           <div className="bg-white/90 dark:bg-gray-800/90 rounded-full p-4">
             <span className="text-2xl">
-              {controls.get()?.x > 50 ? '❤️' : controls.get()?.x < -50 ? '✖️' : ''}
+              {dragX > 50 ? '❤️' : dragX < -50 ? '✖️' : ''}
             </span>
           </div>
         </motion.div>

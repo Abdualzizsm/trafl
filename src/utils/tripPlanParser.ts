@@ -21,6 +21,7 @@ interface Restaurant {
   name: string;
   cuisine: string;
   priceRange: string;
+  price: number;
   rating: number;
   specialDishes: string[];
   location: string;
@@ -58,37 +59,36 @@ interface ParsedTripPlan {
   };
 }
 
-export const parseTripPlan = (plan: string): ParsedTripPlan => {
-  // تحسين التقسيم والمعالجة
-  const sections = plan.split('##').filter(Boolean);
-  
-  // معالجة الأيام
-  const days = sections
-    .find(s => s.includes('الجدول اليومي'))
-    ?.split('اليوم')
-    .filter(Boolean)
-    .map(parseDay) || [];
+import { TripPlanResponse } from '@/services/gemini';
 
-  // معالجة الفنادق
-  const hotels = sections
-    .find(s => s.includes('أماكن الإقامة'))
-    ?.split('\n')
-    .filter(line => line.includes('🏨'))
-    .map(parseHotel) || [];
+export const parseTripPlan = (plan: TripPlanResponse): ParsedTripPlan => {
+  // معالجة الأيام من TripPlanResponse
+  const days = plan.tripPlan.dayPlans.map(dayPlan => ({
+    number: dayPlan.date,
+    activities: dayPlan.activities.map(activity => ({
+      time: activity.time,
+      content: activity.description,
+      cost: activity.cost.toString(),
+      type: (activity.type === 'طعام' ? 'morning' : activity.type === 'سياحة' ? 'afternoon' : 'evening') as 'morning' | 'afternoon' | 'evening',
+      location: activity.title
+    })),
+    weather: {
+      temp: 25, // قيم افتراضية للطقس
+      condition: 'مشمس',
+      humidity: 50
+    }
+  }));
 
-  // معالجة المطاعم
-  const restaurants = sections
-    .find(s => s.includes('المطاعم'))
-    ?.split('\n')
-    .filter(line => line.includes('🍽'))
-    .map(parseRestaurant) || [];
+  // إنشاء قائمة فنادق ومطاعم افتراضية
+  const hotels: Hotel[] = [];
+  const restaurants: Restaurant[] = [];
 
-  // معالجة التكاليف
-  const costs = sections
-    .find(s => s.includes('التكاليف'))
-    ?.split('\n')
-    .filter(line => line.includes('ريال'))
-    .map(parseCost) || [];
+  // إنشاء قائمة تكاليف
+  const costs: Cost[] = [{
+    category: 'الميزانية الإجمالية',
+    amount: plan.tripPlan.totalBudget,
+    details: plan.tripPlan.recommendations
+  }];
 
   return {
     days,
@@ -96,35 +96,11 @@ export const parseTripPlan = (plan: string): ParsedTripPlan => {
     restaurants,
     costs,
     summary: {
-      totalDays: days.length,
-      totalCost: costs.reduce((sum, cost) => sum + cost.amount, 0),
-      destination: extractDestination(plan)
+      totalDays: plan.tripPlan.dayPlans.length,
+      totalCost: plan.tripPlan.totalBudget,
+      destination: plan.tripPlan.summary.split('\n')[0] || 'وجهة غير محددة'
     }
   };
 };
 
-// دوال المساعدة للتحليل
-const parseDay = (dayContent: string): Day => {
-  // تنفيذ التحليل المفصل لليوم
-  // ...
-};
-
-const parseHotel = (hotelLine: string): Hotel => {
-  // تحليل معلومات الفندق
-  // ...
-};
-
-const parseRestaurant = (restaurantLine: string): Restaurant => {
-  // تحليل معلومات المطعم
-  // ...
-};
-
-const parseCost = (costLine: string): Cost => {
-  // تحليل معلومات التكلفة
-  // ...
-};
-
-const extractDestination = (plan: string): string => {
-  // استخراج الوجهة من الخطة
-  // ...
-}; 
+ 

@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
 
-interface TripPlanResponse {
+export interface TripPlanResponse {
   tripPlan: {
     summary: string;
     totalBudget: number;
@@ -151,7 +151,7 @@ Provide the response in the following JSON format (do not include any text befor
     return tripResponse;
     } catch (error) {
       console.error(`محاولة ${currentAttempt + 1} فشلت:`, error);
-      lastError = error;
+      lastError = error instanceof Error ? error : new Error('حدث خطأ غير معروف');
       currentAttempt++;
       
       if (currentAttempt < MAX_RETRIES) {

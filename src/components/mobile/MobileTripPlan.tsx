@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parseTripPlan } from '@/utils/tripPlanParser';
+import { TripPlanResponse } from '@/services/gemini';
 
 interface MobileTripPlanProps {
-  plan: string;
+  plan: TripPlanResponse;
 }
 
 export const MobileTripPlan = ({ plan }: MobileTripPlanProps) => {
