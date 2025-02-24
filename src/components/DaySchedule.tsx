@@ -82,22 +82,26 @@ export const DaySchedule = ({ day, activities, totalCost }: DayScheduleProps) =>
                 <TransportInfo />
               </div>
 
-              <div className="mt-4">
-                <h4 className="font-bold text-base mb-2 flex items-center gap-2">
-                  <span>💡</span>
-                  نصائح لهذا اليوم
-                </h4>
-                <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">
-                  <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                    {activity.tips?.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="mt-1">•</span>
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {activities.some(activity => activity.tips && activity.tips.length > 0) && (
+                <div className="mt-4">
+                  <h4 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <span>💡</span>
+                    نصائح لهذا اليوم
+                  </h4>
+                  <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3">
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      {activities.flatMap((activity, activityIndex) => 
+                        (activity.tips || []).map((tip, tipIndex) => (
+                          <li key={`${activityIndex}-${tipIndex}`} className="flex items-start gap-2">
+                            <span className="mt-1">•</span>
+                            <span>{tip}</span>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
