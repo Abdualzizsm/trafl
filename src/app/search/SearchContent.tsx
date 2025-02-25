@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { IoArrowBack } from 'react-icons/io5';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -48,6 +49,7 @@ interface AIAnalysis {
 }
 
 export default function SearchContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,6 +124,15 @@ export default function SearchContent() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <div className="mb-6 flex items-center">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+        >
+          <IoArrowBack className="text-xl" />
+          <span>العودة للصفحة السابقة</span>
+        </button>
+      </div>
       {aiAnalysis && (
         <div className="space-y-8">
           <div className="bg-white rounded-lg shadow-lg p-6">

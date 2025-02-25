@@ -9,6 +9,7 @@ import { IoSearchOutline, IoLocationOutline, IoCalendarOutline, IoPersonOutline 
 
 export default function DesktopHome2() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [searchParams, setSearchParams] = useState({
     destination: '',
     date: '',
@@ -19,12 +20,14 @@ export default function DesktopHome2() {
     preferences: [] as string[]
   });
 
-  const handleSearch = () => {
-    // تحقق من وجود وجهة السفر على الأقل
-    if (!searchParams.destination.trim()) {
-      alert('الرجاء إدخال وجهة السفر');
-      return;
-    }
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      // تحقق من وجود وجهة السفر على الأقل
+      if (!searchParams.destination.trim()) {
+        alert('الرجاء إدخال وجهة السفر');
+        return;
+      }
 
     // تحويل البيانات إلى معلمات URL
     const queryParams = new URLSearchParams({
@@ -37,7 +40,13 @@ export default function DesktopHome2() {
     }).toString();
 
     // الانتقال إلى صفحة النتائج
-    router.push(`/search?${queryParams}`);
+    await router.push(`/search?${queryParams}`);
+    } catch (error) {
+      console.error('Error during search:', error);
+      alert('حدث خطأ أثناء البحث');
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -215,10 +224,20 @@ export default function DesktopHome2() {
                   <div className="col-span-4 md:col-span-1">
                     <button 
                       onClick={handleSearch}
-                      className="w-full bg-blue-600 text-white rounded-xl p-3 hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                      disabled={isLoading}
+                      className={`w-full bg-blue-600 text-white rounded-xl p-3 hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
                     >
-                      <IoSearchOutline className="text-xl" />
-                      <span>ابحث الآن</span>
+                      {isLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          <span className="mr-2">جاري البحث...</span>
+                        </>
+                      ) : (
+                        <>
+                          <IoSearchOutline className="text-xl" />
+                          <span>ابحث الآن</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
