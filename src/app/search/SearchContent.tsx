@@ -102,8 +102,50 @@ export default function SearchContent() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-pulse text-xl">جاري التحميل...</div>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="container mx-auto px-4">
+          <div className="mb-6 flex items-center">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <IoArrowBack className="text-xl" />
+              <span>العودة للصفحة السابقة</span>
+            </button>
+          </div>
+
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <div className="animate-pulse">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                جاري تخطيط رحلتك إلى {searchParams.get('destination')}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                نقوم بتحليل البيانات وإنشاء خطة رحلة مخصصة لك...
+              </p>
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <div className="relative">
+                <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="w-8 h-8 bg-white dark:bg-gray-900 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow animate-pulse">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow animate-pulse">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow animate-pulse">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
