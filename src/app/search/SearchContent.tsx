@@ -51,6 +51,7 @@ export default function SearchContent() {
   const searchParams = useSearchParams();
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function SearchContent() {
         setAiAnalysis(analysis);
       } catch (error) {
         console.error('Error fetching results:', error);
+        setError(error instanceof Error ? error.message : 'حدث خطأ أثناء جلب البيانات');
       } finally {
         setLoading(false);
       }
@@ -97,7 +99,25 @@ export default function SearchContent() {
   }, [searchParams]);
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">جاري التحميل...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-pulse text-xl">جاري التحميل...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="text-red-600 text-xl mb-4">⚠️ {error}</div>
+        <button
+          onClick={() => window.location.href = '/'}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          العودة للصفحة الرئيسية
+        </button>
+      </div>
+    );
   }
 
   return (

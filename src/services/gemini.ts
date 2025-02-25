@@ -37,6 +37,26 @@ export async function generateTripPlan(tripData: {
   travelers: number;
   tripType: string;
 }): Promise<TripPlanResponse> {
+  // التحقق من صحة البيانات
+  if (!tripData.destination || !tripData.budget || !tripData.startDate || !tripData.endDate || !tripData.tripType) {
+    throw new Error('الرجاء تعبئة جميع الحقول المطلوبة');
+  }
+
+  // التحقق من صحة التواريخ
+  const start = new Date(tripData.startDate);
+  const end = new Date(tripData.endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    throw new Error('الرجاء إدخال تواريخ صحيحة');
+  }
+  if (end < start) {
+    throw new Error('تاريخ النهاية يجب أن يكون بعد تاريخ البداية');
+  }
+
+  // التحقق من صحة الميزانية
+  const budget = parseInt(tripData.budget.replace(/[^0-9]/g, ''));
+  if (isNaN(budget) || budget <= 0) {
+    throw new Error('الرجاء إدخال ميزانية صحيحة');
+  }
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
   
   let currentAttempt = 0;
