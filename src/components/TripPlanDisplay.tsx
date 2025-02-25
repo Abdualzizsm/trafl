@@ -1,9 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-
-const MobileTripPlan = dynamic(() => import('./mobile/MobileTripPlan'));
 const DesktopTripPlan = dynamic(() => import('./desktop/DesktopTripPlan'));
 
 import { TripPlanResponse } from '@/services/gemini';
@@ -13,28 +10,9 @@ interface TripPlanProps {
 }
 
 export const TripPlanDisplay = ({ plan }: TripPlanProps) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkDevice = () => {
-      // التحقق من عرض الشاشة وأيضاً من User Agent
-      const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const isMobileWidth = window.innerWidth < 768;
-      setIsMobile(isMobileDevice || isMobileWidth);
-    };
-
-    checkDevice();
-    window.addEventListener('resize', checkDevice);
-    return () => window.removeEventListener('resize', checkDevice);
-  }, []);
-
   return (
     <div className="min-h-screen">
-      {isMobile ? (
-        <MobileTripPlan plan={plan} />
-      ) : (
-        <DesktopTripPlan plan={plan} />
-      )}
+      <DesktopTripPlan plan={plan} />
     </div>
   );
 };
