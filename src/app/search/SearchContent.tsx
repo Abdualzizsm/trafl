@@ -70,14 +70,20 @@ export default function SearchContent() {
           throw new Error('الرجاء تعبئة جميع الحقول المطلوبة');
         }
 
-        const analysis = await generateTripPlan(
+        // حساب تاريخ النهاية
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(startDateObj);
+        endDateObj.setDate(startDateObj.getDate() + duration);
+        const endDate = endDateObj.toISOString().split('T')[0];
+
+        const analysis = await generateTripPlan({
           destination,
-          parseInt(budget),
-          tripPurpose,
+          budget,
           startDate,
-          duration,
-          travelers
-        );
+          endDate,
+          travelers,
+          tripType: tripPurpose
+        });
 
         setAiAnalysis(analysis);
       } catch (error) {
