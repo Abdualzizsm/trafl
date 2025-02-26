@@ -2,6 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bottom-navigation-height: 4rem;
+}
+
+/* تحسينات للأجهزة المحمولة */
+@media (max-width: 640px) {
+  /* منع تكبير الشاشة عند التركيز على حقول الإدخال */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* تحسين المسافات والهوامش */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* إضافة مساحة في الأسفل لشريط التنقل */
+  .pb-safe {
+    padding-bottom: calc(var(--bottom-navigation-height) + env(safe-area-inset-bottom));
+  }
+
+  /* تحسين أحجام الخطوط */
+  h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  /* تحسين شكل الأزرار */
+  button {
+    padding: 0.5rem 1rem;
+    min-height: 2.5rem;
+    touch-action: manipulation;
+  }
+
+  /* تحسين التفاعل مع اللمس */
+  a, button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* تحسينات خاصة بنظام iOS */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+
+  /* دعم Safe Areas */
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* تحسينات للأجهزة المحمولة */
+@media (max-width: 640px) {
+  input, select {
+    font-size: 16px !important; /* منع تكبير الخط تلقائياً في iOS */
+  }
+
+  /* تحسين المسافات في الأجهزة المحمولة */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* تحسين أحجام الخطوط */
+  h1 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  /* تحسين شكل الأزرار */
+  button {
+    padding: 0.5rem 1rem;
+    min-height: 2.5rem;
+  }
+}
+
+/* تحسينات خاصة بنظام iOS */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
 /* دعم Safe Areas في iOS */
 .safe-area-inset-top {
   padding-top: env(safe-area-inset-top);

@@ -165,7 +165,7 @@ export default function SearchContent() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4 md:py-8">
       <div className="mb-6 flex items-center">
         <button
           onClick={() => router.back()}
@@ -177,20 +177,20 @@ export default function SearchContent() {
       </div>
       {aiAnalysis && (
         <div className="space-y-8">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4">ملخص الرحلة</h2>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">ملخص الرحلة</h2>
             <p className="text-gray-700">{aiAnalysis.tripPlan.summary}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">معلومات الطقس</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">معلومات الطقس</h3>
               <p className="text-gray-700">{aiAnalysis.weatherInfo}</p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">معلومات ثقافية</h3>
-              <ul className="list-disc list-inside space-y-2">
+            <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">معلومات ثقافية</h3>
+              <ul className="list-disc list-inside space-y-1.5 md:space-y-2">
                 {aiAnalysis.culturalInfo.map((info, index) => (
                   <li key={index} className="text-gray-700">{info}</li>
                 ))}
@@ -198,8 +198,8 @@ export default function SearchContent() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">قائمة التعبئة المقترحة</h3>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">قائمة التعبئة المقترحة</h3>
             <ul className="list-disc list-inside space-y-2">
               {aiAnalysis.packingList.map((item, index) => (
                 <li key={index} className="text-gray-700">{item}</li>
@@ -207,8 +207,8 @@ export default function SearchContent() {
             </ul>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">معلومات النقل</h3>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">معلومات النقل</h3>
             <ul className="list-disc list-inside space-y-2">
               {aiAnalysis.transportInfo.map((info, index) => (
                 <li key={index} className="text-gray-700">{info}</li>
@@ -219,7 +219,7 @@ export default function SearchContent() {
           <div className="space-y-6">
             {aiAnalysis.tripPlan.dayPlans.map((day, dayIndex) => (
               <div key={dayIndex} className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4">اليوم {dayIndex + 1} - {day.date}</h3>
+                <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">اليوم {dayIndex + 1} - {day.date}</h3>
                 <div className="space-y-4">
                   {day.activities.map((activity, actIndex) => (
                     <div key={actIndex} className="border-b pb-4 last:border-b-0">
@@ -250,8 +250,8 @@ export default function SearchContent() {
             ))}
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">الميزانية</h3>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">الميزانية</h3>
             <div className="space-y-2">
               <p className="flex justify-between">
                 <span>الميزانية الكلية:</span>
@@ -264,8 +264,8 @@ export default function SearchContent() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">توصيات إضافية</h3>
+          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">توصيات إضافية</h3>
             <ul className="list-disc list-inside space-y-2">
               {aiAnalysis.tripPlan.recommendations.map((rec, index) => (
                 <li key={index} className="text-gray-700">{rec}</li>

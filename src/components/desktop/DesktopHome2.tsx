@@ -6,6 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IoSearchOutline, IoLocationOutline, IoCalendarOutline, IoPersonOutline } from 'react-icons/io5';
+import dynamic from 'next/dynamic';
+
+const BottomNavigation = dynamic(() => import('../BottomNavigation'), { ssr: false });
 
 export default function DesktopHome2() {
   const router = useRouter();
@@ -52,7 +55,7 @@ export default function DesktopHome2() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8 rtl:space-x-reverse">
               <motion.h1 
@@ -109,13 +112,13 @@ export default function DesktopHome2() {
 
       {/* Hero Section */}
       <div className="relative min-h-screen pt-20 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-        <div className="container mx-auto px-6 py-12">
-          <div className="grid grid-cols-2 gap-12 items-center">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
               <motion.h1
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 leading-tight"
               >
                 اكتشف العالم بطريقة
                 <span className="block text-blue-600 dark:text-blue-400">ذكية ومميزة</span>
@@ -124,7 +127,7 @@ export default function DesktopHome2() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed"
+                className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed"
               >
                 نساعدك في تخطيط رحلتك المثالية باستخدام أحدث تقنيات الذكاء الاصطناعي. اكتشف وجهات جديدة، واحصل على خطط سفر مخصصة، واحجز بأفضل الأسعار.
               </motion.p>
@@ -133,39 +136,40 @@ export default function DesktopHome2() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="col-span-full lg:col-span-1 relative">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">اختر وجهتك وتفاصيل رحلتك</div>
+                  <div className="relative">
                     <IoLocationOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                     <input
                       type="text"
                       dir="rtl"
                       value={searchParams.destination}
                       onChange={(e) => setSearchParams({ ...searchParams, destination: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 border-none"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-gray-600"
                       placeholder="إلى أين تريد السفر؟"
                     />
                   </div>
 
-                  <div className="col-span-full lg:col-span-1 relative">
+                  <div className="relative">
                     <IoCalendarOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                     <input
                       type="date"
                       dir="rtl"
                       value={searchParams.date}
                       onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
-                  <div className="col-span-full lg:col-span-1 relative">
+                  <div className="relative">
                     <IoPersonOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
                     <select
                       dir="rtl"
                       value={searchParams.travelers}
                       onChange={(e) => setSearchParams({ ...searchParams, travelers: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
                       <option value="1">مسافر واحد</option>
                       <option value="2">مسافران</option>
@@ -175,12 +179,12 @@ export default function DesktopHome2() {
                     </select>
                   </div>
 
-                  <div className="col-span-full lg:col-span-1 relative">
+                  <div className="relative">
                     <select
                       dir="rtl"
                       value={searchParams.tripPurpose}
                       onChange={(e) => setSearchParams({ ...searchParams, tripPurpose: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
                       <option value="سياحة">سياحة</option>
                       <option value="عمل">رحلة عمل</option>
@@ -195,7 +199,7 @@ export default function DesktopHome2() {
                       dir="rtl"
                       value={searchParams.budget}
                       onChange={(e) => setSearchParams({ ...searchParams, budget: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
                       <option value="1000-2000">الميزانية: 1000-2000 ريال</option>
                       <option value="2000-5000">الميزانية: 2000-5000 ريال</option>
@@ -209,7 +213,7 @@ export default function DesktopHome2() {
                       dir="rtl"
                       value={searchParams.duration}
                       onChange={(e) => setSearchParams({ ...searchParams, duration: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
                       <option value="1">مدة الرحلة: يوم واحد</option>
                       <option value="2">مدة الرحلة: يومان</option>
@@ -337,6 +341,10 @@ export default function DesktopHome2() {
             </Link>
           </motion.div>
         </div>
+      </div>
+      {/* Bottom Navigation for Mobile */}
+      <div className="block lg:hidden">
+        <BottomNavigation />
       </div>
     </main>
   );
