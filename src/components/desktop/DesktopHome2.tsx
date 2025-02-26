@@ -171,11 +171,11 @@ export default function DesktopHome2() {
                       onChange={(e) => setSearchParams({ ...searchParams, travelers: e.target.value })}
                       className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
-                      <option value="1">مسافر واحد</option>
-                      <option value="2">مسافران</option>
-                      <option value="3">3 مسافرين</option>
-                      <option value="4">4 مسافرين</option>
-                      <option value="5+">5+ مسافرين</option>
+                      <option value="1">1 مسافر</option>
+                      <option value="2">2 مسافر</option>
+                      <option value="3">3 مسافر</option>
+                      <option value="4">4 مسافر</option>
+                      <option value="5+">5+ مسافر</option>
                     </select>
                   </div>
 
