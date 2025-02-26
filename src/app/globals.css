@@ -4,6 +4,8 @@
 
 :root {
   --bottom-navigation-height: 4rem;
+  --primary-color: #0066ff;
+  --primary-hover: #0052cc;
 }
 
 /* تحسينات للأجهزة المحمولة */
