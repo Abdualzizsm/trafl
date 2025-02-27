@@ -6,7 +6,7 @@ if (!apiKey) {
   console.error('مفتاح API غير موجود. يرجى التحقق من ملف .env.local');
 }
 
-const genAI = new GoogleGenerativeAI(apiKey || 'dummy-key');
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
@@ -124,34 +124,33 @@ Provide the response in the following JSON format (do not include any text befor
       const text = response.text();
       console.log('Gemini Raw Response:', text);
 
-      // Remove any text before the first { and after the last }
-      let jsonStr = text
-        .replace(/^[^{]*/, '')
-        .replace(/[^}]*$/, '')
-        .trim();
-
-      if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
-        throw new Error('النص المستلم ليس بتنسيق JSON صالح');
-      }
-
+      // تحسين استخراج JSON من النص
+      let jsonStr = '';
       try {
-        console.log('Cleaned JSON:', jsonStr);
+        // محاولة العثور على JSON في النص
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonStr = jsonMatch[0];
+        } else {
+          // إذا لم يتم العثور على JSON، استخدم النص كاملاً
+          jsonStr = text;
+        }
+
+        console.log('Extracted JSON string:', jsonStr);
+        
+        // محاولة تحليل JSON
         const data = JSON.parse(jsonStr);
         console.log('Parsed Data:', data);
 
         // التحقق من وجود كل الحقول المطلوبة
-        if (!data.summary || !data.recommendations || !data.dailyPlan ||
-          !data.weather || !data.culturalTips || !data.packingList ||
-          !data.transportation) {
-          throw new Error('بعض الحقول المطلوبة غير موجودة في الرد');
+        if (!data.summary) {
+          console.warn('Missing summary field');
         }
-
-        // التحقق من أن المصفوفات تحتوي على عناصر
-        if (!Array.isArray(data.recommendations) || !data.recommendations.length ||
-          !Array.isArray(data.culturalTips) || !data.culturalTips.length ||
-          !Array.isArray(data.packingList) || !data.packingList.length ||
-          !Array.isArray(data.transportation) || !data.transportation.length) {
-          throw new Error('بعض المصفوفات فارغة أو غير صحيحة');
+        if (!data.recommendations) {
+          console.warn('Missing recommendations field');
+        }
+        if (!data.dailyPlan) {
+          console.warn('Missing dailyPlan field');
         }
 
         const tripResponse: TripPlanResponse = {
@@ -159,19 +158,19 @@ Provide the response in the following JSON format (do not include any text befor
             summary: data.summary || `رحلة إلى ${tripData.destination}`,
             totalBudget: budget,
             remainingBudget: budget,
-            recommendations: data.recommendations || [],
+            recommendations: Array.isArray(data.recommendations) ? data.recommendations : [],
             dayPlans: Array.isArray(data.dailyPlan) ? data.dailyPlan.map((day: any, index: number) => ({
               date: new Date(start.getTime() + index * 24 * 60 * 60 * 1000).toLocaleDateString('ar'),
-              activities: Array.isArray(day.activities) ? day.activities.map((activity: any) => ({
-                title: activity.title || '',
-                description: activity.description || '',
-                time: activity.time || '',
-                cost: typeof activity.cost === 'number' ? activity.cost : 0,
-                type: activity.type || 'سياحة'
+              activities: Array.isArray(day?.activities) ? day.activities.map((activity: any) => ({
+                title: activity?.title || '',
+                description: activity?.description || '',
+                time: activity?.time || '',
+                cost: typeof activity?.cost === 'number' ? activity.cost : 0,
+                type: activity?.type || 'سياحة'
               })) : [],
-              totalCost: Array.isArray(day.activities) ?
+              totalCost: Array.isArray(day?.activities) ?
                 day.activities.reduce((sum: number, activity: any) =>
-                  sum + (typeof activity.cost === 'number' ? activity.cost : 0), 0) : 0
+                  sum + (typeof activity?.cost === 'number' ? activity.cost : 0), 0) : 0
             })) : []
           },
           weatherInfo: data.weather || '',
@@ -184,7 +183,33 @@ Provide the response in the following JSON format (do not include any text befor
         return tripResponse;
       } catch (jsonError) {
         console.error('خطأ في تحليل JSON:', jsonError);
-        throw new Error('حدث خطأ في معالجة البيانات المستلمة من الخدمة');
+        console.error('النص الأصلي:', text);
+        console.error('محاولة استخراج JSON:', jsonStr);
+        
+        // محاولة إنشاء استجابة بسيطة إذا فشل تحليل JSON
+        return {
+          tripPlan: {
+            summary: `رحلة إلى ${tripData.destination}`,
+            totalBudget: budget,
+            remainingBudget: budget,
+            recommendations: [`استكشاف ${tripData.destination}`],
+            dayPlans: Array.from({ length: days }, (_, index) => ({
+              date: new Date(start.getTime() + index * 24 * 60 * 60 * 1000).toLocaleDateString('ar'),
+              activities: [{
+                title: `استكشاف ${tripData.destination}`,
+                description: 'استكشاف المعالم السياحية الشهيرة',
+                time: '09:00',
+                cost: 0,
+                type: 'سياحة'
+              }],
+              totalCost: 0
+            }))
+          },
+          weatherInfo: 'معلومات الطقس غير متوفرة',
+          culturalInfo: ['معلومات ثقافية غير متوفرة'],
+          packingList: ['قائمة الأمتعة غير متوفرة'],
+          transportInfo: ['معلومات النقل غير متوفرة']
+        };
       }
     } catch (error) {
       console.error(`محاولة ${currentAttempt + 1} فشلت:`, error);
