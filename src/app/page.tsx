@@ -1,5 +1,6 @@
 'use client';
 
+// تحديث لإعادة النشر - 27 فبراير 2025
 import React, { useEffect, useState } from 'react';
 import DesktopHome from '@/components/desktop/DesktopHome2';
 import dynamic from 'next/dynamic';
