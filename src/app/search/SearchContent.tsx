@@ -171,23 +171,38 @@ export default function SearchContent() {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl max-w-md w-full text-center"
+          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl max-w-md w-full text-center"
         >
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">{error}</h2>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.href = '/'}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-2.5 px-5 rounded-full shadow-lg hover:shadow-xl transition-all"
-          >
-            العودة للصفحة الرئيسية
-          </motion.button>
+          <div className="text-amber-500 text-6xl mb-6">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">لم يتم العثور على نتائج</h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            {error.includes('API') 
+              ? 'هناك مشكلة في الاتصال بخدمة البحث. يرجى المحاولة مرة أخرى لاحقًا.' 
+              : error}
+          </p>
+          <div className="flex flex-col gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-medium py-2.5 px-5 rounded-xl shadow-lg hover:shadow-xl transition-all"
+            >
+              المحاولة مرة أخرى
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push('/')}
+              className="bg-white dark:bg-gray-700 text-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 font-medium py-2.5 px-5 rounded-xl shadow-md hover:shadow-lg transition-all"
+            >
+              العودة للصفحة الرئيسية
+            </motion.button>
+          </div>
         </motion.div>
       </div>
     );

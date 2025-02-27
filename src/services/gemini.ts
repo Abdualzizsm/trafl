@@ -1,6 +1,15 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+// التحقق من وجود مفتاح API
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+if (!apiKey) {
+  console.error('مفتاح API غير موجود. يرجى التحقق من ملف .env.local');
+}
+
+const genAI = new GoogleGenerativeAI(apiKey || 'dummy-key');
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds
 
 export interface TripPlanResponse {
   tripPlan: {
@@ -26,9 +35,6 @@ export interface TripPlanResponse {
   transportInfo: string[];
 }
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // 2 seconds
-
 export async function generateTripPlan(tripData: {
   destination: string;
   budget: string;
@@ -37,6 +43,11 @@ export async function generateTripPlan(tripData: {
   travelers: number;
   tripType: string;
 }): Promise<TripPlanResponse> {
+  // التحقق من وجود مفتاح API
+  if (!apiKey) {
+    throw new Error('مفتاح API غير موجود. يرجى التحقق من إعدادات التطبيق.');
+  }
+
   // التحقق من صحة البيانات
   if (!tripData.destination || !tripData.budget || !tripData.startDate || !tripData.endDate || !tripData.tripType) {
     throw new Error('الرجاء تعبئة جميع الحقول المطلوبة');
@@ -57,23 +68,23 @@ export async function generateTripPlan(tripData: {
   if (isNaN(budget) || budget <= 0) {
     throw new Error('الرجاء إدخال ميزانية صحيحة');
   }
+
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-  
+
   let currentAttempt = 0;
   let lastError: Error | null = null;
 
   while (currentAttempt < MAX_RETRIES) {
     try {
-  
-  // حساب عدد الأيام
-  const start = new Date(tripData.startDate);
-  const end = new Date(tripData.endDate);
-  const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  
-  // تحويل الميزانية إلى رقم
-  const budget = parseInt(tripData.budget.split('-')[1] || tripData.budget);
-  
-  const prompt = `You are a travel planning assistant. Create a detailed travel plan for a ${days}-day trip to ${tripData.destination} for ${tripData.travelers} travelers with a budget of ${budget} SAR. Trip type: ${tripData.tripType}.
+      // حساب عدد الأيام
+      const start = new Date(tripData.startDate);
+      const end = new Date(tripData.endDate);
+      const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+      // تحويل الميزانية إلى رقم
+      const budget = parseInt(tripData.budget.split('-')[1] || tripData.budget);
+
+      const prompt = `You are a travel planning assistant. Create a detailed travel plan for a ${days}-day trip to ${tripData.destination} for ${tripData.travelers} travelers with a budget of ${budget} SAR. Trip type: ${tripData.tripType}.
 
 Provide the response in the following JSON format (do not include any text before or after the JSON, and ensure all text is in Arabic):
 
@@ -108,78 +119,94 @@ Provide the response in the following JSON format (do not include any text befor
           maxOutputTokens: 2048,
         }
       });
-      
+
       const response = await result.response;
       const text = response.text();
       console.log('Gemini Raw Response:', text);
-      
+
       // Remove any text before the first { and after the last }
       let jsonStr = text
         .replace(/^[^{]*/, '')
         .replace(/[^}]*$/, '')
         .trim();
 
-    if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
-      throw new Error('النص المستلم ليس بتنسيق JSON صالح');
-    }
-    console.log('Cleaned JSON:', jsonStr);
-    const data = JSON.parse(jsonStr);
-    console.log('Parsed Data:', data);
-    
-      // التحقق من وجود كل الحقول المطلوبة
-      if (!data.summary || !data.recommendations || !data.dailyPlan || 
-          !data.weather || !data.culturalTips || !data.packingList || 
-          !data.transportation) {
-        throw new Error('بعض الحقول المطلوبة غير موجودة في الرد');
+      if (!jsonStr.startsWith('{') || !jsonStr.endsWith('}')) {
+        throw new Error('النص المستلم ليس بتنسيق JSON صالح');
       }
 
-      // التحقق من أن المصفوفات تحتوي على عناصر
-      if (!Array.isArray(data.recommendations) || !data.recommendations.length ||
+      try {
+        console.log('Cleaned JSON:', jsonStr);
+        const data = JSON.parse(jsonStr);
+        console.log('Parsed Data:', data);
+
+        // التحقق من وجود كل الحقول المطلوبة
+        if (!data.summary || !data.recommendations || !data.dailyPlan ||
+          !data.weather || !data.culturalTips || !data.packingList ||
+          !data.transportation) {
+          throw new Error('بعض الحقول المطلوبة غير موجودة في الرد');
+        }
+
+        // التحقق من أن المصفوفات تحتوي على عناصر
+        if (!Array.isArray(data.recommendations) || !data.recommendations.length ||
           !Array.isArray(data.culturalTips) || !data.culturalTips.length ||
           !Array.isArray(data.packingList) || !data.packingList.length ||
           !Array.isArray(data.transportation) || !data.transportation.length) {
-        throw new Error('بعض المصفوفات فارغة أو غير صحيحة');
-      }
+          throw new Error('بعض المصفوفات فارغة أو غير صحيحة');
+        }
 
-    const tripResponse: TripPlanResponse = {
-      tripPlan: {
-        summary: data.summary || `رحلة إلى ${tripData.destination}`,
-        totalBudget: budget,
-        remainingBudget: budget,
-        recommendations: data.recommendations || [],
-        dayPlans: Array.isArray(data.dailyPlan) ? data.dailyPlan.map((day: any, index: number) => ({
-          date: new Date(start.getTime() + index * 24 * 60 * 60 * 1000).toLocaleDateString('ar'),
-          activities: Array.isArray(day.activities) ? day.activities.map((activity: any) => ({
-            title: activity.title || '',
-            description: activity.description || '',
-            time: activity.time || '',
-            cost: typeof activity.cost === 'number' ? activity.cost : 0,
-            type: activity.type || 'سياحة'
-          })) : [],
-          totalCost: Array.isArray(day.activities) ? 
-            day.activities.reduce((sum: number, activity: any) => 
-              sum + (typeof activity.cost === 'number' ? activity.cost : 0), 0) : 0
-        })) : []
-      },
-      weatherInfo: data.weather || '',
-      culturalInfo: Array.isArray(data.culturalTips) ? data.culturalTips : [],
-      packingList: Array.isArray(data.packingList) ? data.packingList : [],
-      transportInfo: Array.isArray(data.transportation) ? data.transportation : []
-    };
-    
-    console.log('Final Response:', tripResponse);
-    return tripResponse;
+        const tripResponse: TripPlanResponse = {
+          tripPlan: {
+            summary: data.summary || `رحلة إلى ${tripData.destination}`,
+            totalBudget: budget,
+            remainingBudget: budget,
+            recommendations: data.recommendations || [],
+            dayPlans: Array.isArray(data.dailyPlan) ? data.dailyPlan.map((day: any, index: number) => ({
+              date: new Date(start.getTime() + index * 24 * 60 * 60 * 1000).toLocaleDateString('ar'),
+              activities: Array.isArray(day.activities) ? day.activities.map((activity: any) => ({
+                title: activity.title || '',
+                description: activity.description || '',
+                time: activity.time || '',
+                cost: typeof activity.cost === 'number' ? activity.cost : 0,
+                type: activity.type || 'سياحة'
+              })) : [],
+              totalCost: Array.isArray(day.activities) ?
+                day.activities.reduce((sum: number, activity: any) =>
+                  sum + (typeof activity.cost === 'number' ? activity.cost : 0), 0) : 0
+            })) : []
+          },
+          weatherInfo: data.weather || '',
+          culturalInfo: Array.isArray(data.culturalTips) ? data.culturalTips : [],
+          packingList: Array.isArray(data.packingList) ? data.packingList : [],
+          transportInfo: Array.isArray(data.transportation) ? data.transportation : []
+        };
+
+        console.log('Final Response:', tripResponse);
+        return tripResponse;
+      } catch (jsonError) {
+        console.error('خطأ في تحليل JSON:', jsonError);
+        throw new Error('حدث خطأ في معالجة البيانات المستلمة من الخدمة');
+      }
     } catch (error) {
       console.error(`محاولة ${currentAttempt + 1} فشلت:`, error);
-      lastError = error instanceof Error ? error : new Error('حدث خطأ غير معروف');
+
+      // تحقق من نوع الخطأ للحصول على رسالة أكثر تحديدًا
+      if (error instanceof Error) {
+        if (error.message.includes('API key')) {
+          throw new Error('مفتاح API غير صالح أو منتهي الصلاحية');
+        }
+        lastError = error;
+      } else {
+        lastError = new Error('حدث خطأ غير معروف');
+      }
+
       currentAttempt++;
-      
+
       if (currentAttempt < MAX_RETRIES) {
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       }
     }
   }
-  
+
   // إذا وصلنا إلى هنا، فهذا يعني أن جميع المحاولات قد فشلت
-  throw new Error('لم يتم العثور على نتائج');
+  throw lastError || new Error('لم يتم العثور على نتائج. يرجى التحقق من اتصالك بالإنترنت ومحاولة البحث مرة أخرى.');
 }
