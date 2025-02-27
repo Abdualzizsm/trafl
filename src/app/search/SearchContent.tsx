@@ -56,47 +56,47 @@ export default function SearchContent() {
   const [error, setError] = useState<string | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true);
-      setAiAnalysis(null);
-      
-      try {
-        const destination = searchParams.get('destination');
-        const budget = searchParams.get('budget');
-        const tripPurpose = searchParams.get('tripPurpose');
-        const startDate = searchParams.get('date') || new Date().toISOString().split('T')[0];
-        const duration = parseInt(searchParams.get('duration') || '3');
-        const travelers = parseInt(searchParams.get('travelers') || '1');
+  const fetchResults = async () => {
+    setLoading(true);
+    setAiAnalysis(null);
+    
+    try {
+      const destination = searchParams.get('destination');
+      const budget = searchParams.get('budget');
+      const tripPurpose = searchParams.get('tripPurpose');
+      const startDate = searchParams.get('date') || new Date().toISOString().split('T')[0];
+      const duration = parseInt(searchParams.get('duration') || '3');
+      const travelers = parseInt(searchParams.get('travelers') || '1');
 
-        if (!destination || !budget || !tripPurpose) {
-          throw new Error('الرجاء تعبئة جميع الحقول المطلوبة');
-        }
-
-        // حساب تاريخ النهاية
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(startDateObj);
-        endDateObj.setDate(startDateObj.getDate() + duration);
-        const endDate = endDateObj.toISOString().split('T')[0];
-
-        const analysis = await generateTripPlan({
-          destination,
-          budget,
-          startDate,
-          endDate,
-          travelers,
-          tripType: tripPurpose
-        });
-
-        setAiAnalysis(analysis);
-      } catch (error) {
-        console.error('Error fetching results:', error);
-        setError(error instanceof Error ? error.message : 'حدث خطأ أثناء جلب البيانات');
-      } finally {
-        setLoading(false);
+      if (!destination || !budget || !tripPurpose) {
+        throw new Error('الرجاء تعبئة جميع الحقول المطلوبة');
       }
-    };
 
+      // حساب تاريخ النهاية
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(startDateObj);
+      endDateObj.setDate(startDateObj.getDate() + duration);
+      const endDate = endDateObj.toISOString().split('T')[0];
+
+      const analysis = await generateTripPlan({
+        destination,
+        budget,
+        startDate,
+        endDate,
+        travelers,
+        tripType: tripPurpose
+      });
+
+      setAiAnalysis(analysis);
+    } catch (error) {
+      console.error('Error fetching results:', error);
+      setError(error instanceof Error ? error.message : 'حدث خطأ أثناء جلب البيانات');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchResults();
   }, [searchParams]);
 
@@ -294,7 +294,7 @@ export default function SearchContent() {
                   />
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                     <h2 className="text-xl font-bold text-white">{result.title}</h2>
-                    <p className="text-sm text-white/80">{result.subtitle}</p>
+                    <p className="text-sm text-white/80">{result.description.substring(0, 50)}...</p>
                   </div>
                 </div>
                 
@@ -316,7 +316,7 @@ export default function SearchContent() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-500 dark:text-gray-400">
                       <span>🗓️</span>
-                      <span>{result.duration || '3 أيام'}</span>
+                      <span>{searchParams.get('duration') || '3'} أيام</span>
                     </div>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
