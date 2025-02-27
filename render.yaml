@@ -9,3 +9,9 @@ services:
         value: production
       - key: PORT
         value: 3000
+      - key: NEXT_PUBLIC_GEMINI_API_KEY
+        sync: false
+    autoDeploy: true
+    branch: main
+    healthCheckPath: /
+    healthCheckTimeout: 300
