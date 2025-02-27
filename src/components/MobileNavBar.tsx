@@ -48,7 +48,7 @@ export default function MobileNavBar() {
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed bottom-0 left-0 right-0 z-50"
     >
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-t-2xl border-t border-gray-100 dark:border-gray-700">
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg rounded-t-2xl">
         <div className="flex justify-around items-center py-2 px-2">
           {navItems.map((item) => {
             const isActive = pathname === item.path;
@@ -65,7 +65,7 @@ export default function MobileNavBar() {
                       scale: isActive ? 1.1 : 1
                     }}
                     transition={{ type: "spring", stiffness: 500 }}
-                    className={`${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}
+                    className={`${isActive ? 'text-white' : 'text-blue-100'}`}
                   >
                     {isActive ? item.activeIcon : item.inactiveIcon}
                   </motion.div>
@@ -75,7 +75,7 @@ export default function MobileNavBar() {
                       opacity: isActive ? 1 : 0.7,
                       scale: isActive ? 1 : 0.9
                     }}
-                    className={`text-xs mt-1 ${isActive ? 'font-medium text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}
+                    className={`text-xs mt-1 ${isActive ? 'font-medium text-white' : 'text-blue-100'}`}
                   >
                     {item.label}
                   </motion.span>
@@ -83,7 +83,7 @@ export default function MobileNavBar() {
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute -top-1 w-12 h-1 bg-blue-600 dark:bg-blue-400 rounded-full"
+                      className="absolute -top-1 w-12 h-1 bg-white rounded-full"
                       transition={{ type: "spring", stiffness: 500 }}
                     />
                   )}

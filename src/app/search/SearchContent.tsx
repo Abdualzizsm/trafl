@@ -194,182 +194,127 @@ export default function SearchContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-6 md:py-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
+    <div className="min-h-screen pb-20 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mb-8 flex items-center"
+          className="text-2xl sm:text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 text-transparent bg-clip-text"
         >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-sm"
-          >
-            <IoArrowBack className="text-xl" />
-            <span>العودة للصفحة السابقة</span>
-          </motion.button>
-        </motion.div>
+          نتائج البحث
+        </motion.h1>
         
-        {aiAnalysis && (
-          <div className="space-y-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
+        {loading ? (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-20"
+          >
+            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-300">جاري البحث عن أفضل الخيارات لك...</p>
+          </motion.div>
+        ) : error ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center max-w-md mx-auto"
+          >
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-800/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-2">حدث خطأ أثناء البحث</h3>
+            <p className="text-red-600 dark:text-red-300 mb-4">لم نتمكن من العثور على نتائج لبحثك. يرجى المحاولة مرة أخرى.</p>
+            <button 
+              onClick={fetchResults}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
             >
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 text-transparent bg-clip-text">ملخص الرحلة</h2>
-              <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">{aiAnalysis.tripPlan.summary}</p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-              <motion.div 
+              إعادة المحاولة
+            </button>
+          </motion.div>
+        ) : results.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 text-center max-w-md mx-auto"
+          >
+            <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-800/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-yellow-500 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-yellow-700 dark:text-yellow-400 mb-2">لا توجد نتائج</h3>
+            <p className="text-yellow-600 dark:text-yellow-300 mb-4">لم نتمكن من العثور على نتائج تطابق معايير بحثك. يرجى تجربة معايير مختلفة.</p>
+            <button 
+              onClick={() => window.history.back()}
+              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
+            >
+              العودة للبحث
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {results.map((result, index) => (
+              <motion.div
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
+                transition={{ delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">🌤️</span>
-                  <h3 className="text-xl md:text-2xl font-bold">معلومات الطقس</h3>
-                </div>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{aiAnalysis.weatherInfo}</p>
-              </motion.div>
-
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">🏛️</span>
-                  <h3 className="text-xl md:text-2xl font-bold">معلومات ثقافية</h3>
-                </div>
-                <ul className="space-y-2.5 md:space-y-3">
-                  {aiAnalysis.culturalInfo.map((info, index) => (
-                    <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                      <span className="text-blue-500 mt-1">•</span>
-                      <span>{info}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">قائمة التعبئة المقترحة</h3>
-              <ul className="space-y-2.5 md:space-y-3">
-                {aiAnalysis.packingList.map((item, index) => (
-                  <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">معلومات النقل</h3>
-              <ul className="space-y-2.5 md:space-y-3">
-                {aiAnalysis.transportInfo.map((info, index) => (
-                  <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span>{info}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <div className="space-y-6">
-              {aiAnalysis.tripPlan.dayPlans.map((day, dayIndex) => (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: dayIndex * 0.1 }}
-                  key={dayIndex} 
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-                >
-                  <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">اليوم {dayIndex + 1} - {day.date}</h3>
-                  <div className="space-y-4">
-                    {day.activities.map((activity, actIndex) => (
-                      <div key={actIndex} className="border-b pb-4 last:border-b-0">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-semibold">{activity.title}</h4>
-                            <p className="text-gray-600">{activity.description}</p>
-                            <p className="text-sm text-gray-500">{activity.time}</p>
-                          </div>
-                          <div className="text-left">
-                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                              {activity.type}
-                            </span>
-                            <p className="text-green-600 font-medium mt-1">
-                              {activity.cost} ريال
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                <div className="relative h-48 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
+                  <Image
+                    src={result.image || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'}
+                    alt={result.title}
+                    width={400}
+                    height={200}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <h2 className="text-xl font-bold text-white">{result.title}</h2>
+                    <p className="text-sm text-white/80">{result.subtitle}</p>
                   </div>
-                  <div className="mt-4 pt-4 border-t">
-                    <p className="text-right font-semibold">
-                      إجمالي تكلفة اليوم: {day.totalCost} ريال
-                    </p>
+                </div>
+                
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <span className="text-blue-600 dark:text-blue-400">⭐</span>
+                      <span className="font-medium">{result.rating || '4.5'}</span>
+                    </div>
+                    <div className="text-green-600 dark:text-green-400 font-bold">
+                      {result.price} ريال
+                    </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">الميزانية</h3>
-              <div className="space-y-2.5 md:space-y-3">
-                <p className="flex justify-between">
-                  <span>الميزانية الكلية:</span>
-                  <span className="font-medium">{aiAnalysis.tripPlan.totalBudget} ريال</span>
-                </p>
-                <p className="flex justify-between">
-                  <span>الميزانية المتبقية:</span>
-                  <span className="font-medium">{aiAnalysis.tripPlan.remainingBudget} ريال</span>
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 md:p-8 border border-gray-100 dark:border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">توصيات إضافية</h3>
-              <ul className="space-y-2.5 md:space-y-3">
-                {aiAnalysis.tripPlan.recommendations.map((rec, index) => (
-                  <li key={index} className="text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                    <span className="text-blue-500 mt-1">•</span>
-                    <span>{rec}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+                  
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                    {result.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-gray-500 dark:text-gray-400">
+                      <span>🗓️</span>
+                      <span>{result.duration || '3 أيام'}</span>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm font-medium"
+                    >
+                      عرض التفاصيل
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </div>
     </div>
