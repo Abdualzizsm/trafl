@@ -52,48 +52,55 @@ export default function DesktopHome2() {
     }
   };
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-md">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8 rtl:space-x-reverse">
-              <motion.h1 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text"
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                رحلاتي
-              </motion.h1>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 text-transparent bg-clip-text">
+                  رحلاتي
+                </h1>
+              </motion.div>
               <div className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
                 {[
-                  { href: '/', label: 'الرئيسية' },
-                  { href: '/explore', label: 'استكشف' },
-                  { href: '/offers', label: 'العروض' },
-                  { href: '/about', label: 'عن رحلاتي' }
+                  { href: '/', label: 'الرئيسية', icon: '🏠' },
+                  { href: '/explore', label: 'استكشف', icon: '🌎' },
+                  { href: '/offers', label: 'العروض', icon: '🎁' },
+                  { href: '/about', label: 'عن رحلاتي', icon: 'ℹ️' }
                 ].map((link, index) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.1, type: "spring" }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <Link 
                       href={link.href} 
-                      className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      className="flex items-center gap-1 px-3 py-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                     >
-                      {link.label}
+                      <span>{link.icon}</span>
+                      <span>{link.label}</span>
                     </Link>
                   </motion.div>
                 ))}
               </div>
             </div>
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <div className="flex items-center gap-3">
               <motion.button 
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
               >
                 تسجيل الدخول
               </motion.button>
@@ -101,6 +108,8 @@ export default function DesktopHome2() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
               >
                 إنشاء حساب
@@ -136,114 +145,109 @@ export default function DesktopHome2() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-gray-700"
               >
-                <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">اختر وجهتك وتفاصيل رحلتك</div>
-                  <div className="relative">
-                    <IoLocationOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-                    <input
-                      type="text"
-                      dir="rtl"
-                      value={searchParams.destination}
-                      onChange={(e) => setSearchParams({ ...searchParams, destination: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-gray-600"
-                      placeholder="إلى أين تريد السفر؟"
-                    />
+                <div className="space-y-4">
+                  <div className="text-lg font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-2">
+                    <IoSearchOutline className="text-blue-500" />
+                    ابحث عن رحلتك المثالية
                   </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative group">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">الوجهة</label>
+                      <div className="relative">
+                        <IoLocationOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors text-xl" />
+                        <input
+                          type="text"
+                          dir="rtl"
+                          value={searchParams.destination}
+                          onChange={(e) => setSearchParams({ ...searchParams, destination: e.target.value })}
+                          className="w-full bg-gray-50 dark:bg-gray-700/70 rounded-xl p-3 pr-10 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 border border-gray-200 dark:border-gray-600 transition-all focus:border-blue-500"
+                          placeholder="إلى أين تريد السفر؟"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="relative">
-                    <IoCalendarOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-                    <input
-                      type="date"
-                      dir="rtl"
-                      value={searchParams.date}
-                      onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="relative group">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">تاريخ السفر</label>
+                      <div className="relative">
+                        <IoCalendarOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors text-xl" />
+                        <input
+                          type="date"
+                          dir="rtl"
+                          value={searchParams.date}
+                          onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
+                          className="w-full bg-gray-50 dark:bg-gray-700/70 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        />
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="relative">
-                    <IoPersonOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-                    <select
-                      dir="rtl"
-                      value={searchParams.travelers}
-                      onChange={(e) => setSearchParams({ ...searchParams, travelers: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                      <option value="1">1 مسافر</option>
-                      <option value="2">2 مسافر</option>
-                      <option value="3">3 مسافر</option>
-                      <option value="4">4 مسافر</option>
-                      <option value="5+">5+ مسافر</option>
-                    </select>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative group">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">عدد المسافرين</label>
+                      <div className="relative">
+                        <IoPersonOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors text-xl" />
+                        <select
+                          dir="rtl"
+                          value={searchParams.travelers}
+                          onChange={(e) => setSearchParams({ ...searchParams, travelers: e.target.value })}
+                          className="w-full bg-gray-50 dark:bg-gray-700/70 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="1">1 مسافر</option>
+                          <option value="2">2 مسافر</option>
+                          <option value="3">3 مسافر</option>
+                          <option value="4">4 مسافر</option>
+                          <option value="5+">5+ مسافر</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="relative group">
+                      <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">مدة الرحلة (أيام)</label>
+                      <div className="relative">
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 group-hover:text-blue-600 transition-colors text-xl">🕒</span>
+                        <select
+                          dir="rtl"
+                          value={searchParams.duration}
+                          onChange={(e) => setSearchParams({ ...searchParams, duration: e.target.value })}
+                          className="w-full bg-gray-50 dark:bg-gray-700/70 rounded-xl p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none transition-all"
+                        >
+                          <option value="1">يوم واحد</option>
+                          <option value="2">يومان</option>
+                          <option value="3">3 أيام</option>
+                          <option value="4">4 أيام</option>
+                          <option value="5">5 أيام</option>
+                          <option value="7">أسبوع</option>
+                          <option value="14">أسبوعان</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="relative">
-                    <select
-                      dir="rtl"
-                      value={searchParams.tripPurpose}
-                      onChange={(e) => setSearchParams({ ...searchParams, tripPurpose: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                      <option value="سياحة">سياحة</option>
-                      <option value="عمل">رحلة عمل</option>
-                      <option value="عائلية">رحلة عائلية</option>
-                      <option value="شهر العسل">شهر العسل</option>
-                      <option value="مغامرة">مغامرة</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-full lg:col-span-2 relative">
-                    <select
-                      dir="rtl"
-                      value={searchParams.budget}
-                      onChange={(e) => setSearchParams({ ...searchParams, budget: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                      <option value="1000-2000">الميزانية: 1000-2000 ريال</option>
-                      <option value="2000-5000">الميزانية: 2000-5000 ريال</option>
-                      <option value="5000-10000">الميزانية: 5000-10000 ريال</option>
-                      <option value="10000+">الميزانية: أكثر من 10000 ريال</option>
-                    </select>
-                  </div>
-
-                  <div className="col-span-full lg:col-span-2 relative">
-                    <select
-                      dir="rtl"
-                      value={searchParams.duration}
-                      onChange={(e) => setSearchParams({ ...searchParams, duration: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-700 rounded-lg p-2.5 sm:p-3 pr-10 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 appearance-none"
-                    >
-                      <option value="1">مدة الرحلة: يوم واحد</option>
-                      <option value="2">مدة الرحلة: يومان</option>
-                      <option value="3">مدة الرحلة: 3 أيام</option>
-                      <option value="5">مدة الرحلة: 5 أيام</option>
-                      <option value="7">مدة الرحلة: أسبوع</option>
-                      <option value="14">مدة الرحلة: أسبوعان</option>
-                    </select>
-                  </div>
-
-
-                  <div className="col-span-4 md:col-span-1">
-                    <button 
-                      onClick={handleSearch}
-                      disabled={isLoading}
-                      className={`w-full bg-blue-600 text-white rounded-xl p-3 hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
-                    >
-                      {isLoading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                          <span className="mr-2">جاري البحث...</span>
-                        </>
-                      ) : (
-                        <>
-                          <IoSearchOutline className="text-xl" />
-                          <span>ابحث الآن</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleSearch}
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 px-4 rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        جاري البحث...
+                      </>
+                    ) : (
+                      <>
+                        <IoSearchOutline className="text-xl" />
+                        ابحث الآن
+                      </>
+                    )}
+                  </motion.button>
                 </div>
               </motion.div>
             </div>
