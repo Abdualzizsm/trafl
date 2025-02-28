@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 const DesktopTripPlan = dynamic(() => import('./desktop/DesktopTripPlan'));
 
-import { TripPlanResponse } from '@/services/gemini';
+import { TripPlanResponse } from '@/services/huggingface';
 
 interface TripPlanProps {
   plan: TripPlanResponse;

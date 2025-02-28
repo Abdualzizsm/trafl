@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { parseTripPlan } from '@/utils/tripPlanParser';
-import { TripPlanResponse } from '@/services/gemini';
+import { TripPlanResponse } from '@/services/huggingface';
 import { LocationCard } from '../shared/LocationCard';
 import { CostBreakdown } from '../shared/CostBreakdown';
 import { WeatherWidget } from '../shared/WeatherWidget';

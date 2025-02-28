@@ -6,7 +6,8 @@ import { IoArrowBack } from 'react-icons/io5';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { generateTripPlan } from '@/services/gemini';
+// تغيير استيراد الخدمة من gemini إلى huggingface
+import { generateTripPlan } from '@/services/huggingface';
 
 interface SearchResult {
   id: string;

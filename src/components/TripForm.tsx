@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TRIP_TYPES } from '@/config/constants';
-import { generateTripPlan, TripPlanResponse } from '@/services/gemini';
+import { generateTripPlan, TripPlanResponse } from '@/services/huggingface';
 import TripPlanDisplay from './TripPlanDisplay';
 
 export const TripForm = () => {

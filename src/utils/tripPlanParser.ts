@@ -59,7 +59,7 @@ interface ParsedTripPlan {
   };
 }
 
-import { TripPlanResponse } from '@/services/gemini';
+import { TripPlanResponse } from '@/services/huggingface';
 
 export const parseTripPlan = (plan: TripPlanResponse): ParsedTripPlan => {
   // معالجة الأيام من TripPlanResponse
@@ -102,5 +102,3 @@ export const parseTripPlan = (plan: TripPlanResponse): ParsedTripPlan => {
     }
   };
 };
-
- 

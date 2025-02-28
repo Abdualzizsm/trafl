@@ -1,16 +1,14 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-// التحقق من وجود مفتاح API
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-if (!apiKey) {
-  console.error('مفتاح API غير موجود. يرجى التحقق من ملف .env.local');
-}
-
-const genAI = new GoogleGenerativeAI(apiKey || '');
-
+// خدمة Hugging Face للحصول على خطط الرحلات
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds
 
+// الحصول على مفتاح API من متغيرات البيئة
+const apiKey = process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY;
+if (!apiKey) {
+  console.error('مفتاح Hugging Face API غير موجود. يرجى التحقق من ملف .env.local');
+}
+
+// واجهة استجابة خطة الرحلة (نفس الواجهة المستخدمة في خدمة Gemini)
 export interface TripPlanResponse {
   tripPlan: {
     summary: string;
@@ -45,7 +43,7 @@ export async function generateTripPlan(tripData: {
 }): Promise<TripPlanResponse> {
   // التحقق من وجود مفتاح API
   if (!apiKey) {
-    throw new Error('مفتاح API غير موجود. يرجى التحقق من إعدادات التطبيق.');
+    throw new Error('مفتاح Hugging Face API غير موجود. يرجى التحقق من إعدادات التطبيق.');
   }
 
   // التحقق من صحة البيانات
@@ -69,16 +67,12 @@ export async function generateTripPlan(tripData: {
     throw new Error('الرجاء إدخال ميزانية صحيحة');
   }
 
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
   let currentAttempt = 0;
   let lastError: Error | null = null;
 
   while (currentAttempt < MAX_RETRIES) {
     try {
       // حساب عدد الأيام
-      const start = new Date(tripData.startDate);
-      const end = new Date(tripData.endDate);
       const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
       // تحويل الميزانية إلى رقم
@@ -110,19 +104,35 @@ Provide the response in the following JSON format (do not include any text befor
   "transportation": ["Transportation info 1 in Arabic", "Transportation info 2 in Arabic"]
 }`;
 
-      const result = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
-        }
+      // استدعاء Hugging Face API
+      const response = await fetch('https://api-inference.huggingface.co/models/meta-llama/Llama-2-70b-chat-hf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: {
+            max_new_tokens: 2048,
+            temperature: 0.7,
+            top_p: 0.95,
+            top_k: 40,
+            repetition_penalty: 1.1
+          }
+        })
       });
 
-      const response = await result.response;
-      const text = response.text();
-      console.log('Gemini Raw Response:', text);
+      if (!response.ok) {
+        throw new Error(`فشل الاتصال بـ Hugging Face API: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Hugging Face Raw Response:', result);
+
+      // استخراج النص من الاستجابة
+      const text = Array.isArray(result) && result.length > 0 ? result[0].generated_text : result.generated_text;
+      console.log('Generated Text:', text);
 
       // تحسين استخراج JSON من النص
       let jsonStr = '';
@@ -217,7 +227,7 @@ Provide the response in the following JSON format (do not include any text befor
       // تحقق من نوع الخطأ للحصول على رسالة أكثر تحديدًا
       if (error instanceof Error) {
         if (error.message.includes('API key')) {
-          throw new Error('مفتاح API غير صالح أو منتهي الصلاحية');
+          throw new Error('مفتاح Hugging Face API غير صالح أو منتهي الصلاحية');
         }
         lastError = error;
       } else {
